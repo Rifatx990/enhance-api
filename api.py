@@ -14,6 +14,14 @@ os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 def delete_file_later(file_path, delay=180):
     Timer(delay, lambda: os.remove(file_path) if os.path.exists(file_path) else None).start()
 
+@app.route('/')
+def index():
+    return {'status': 'running', 'message': 'Image Enhancement API'}, 200
+
+@app.route('/health')
+def health_check():
+    return {'status': 'healthy'}, 200
+
 @app.route('/enhance', methods=['POST'])
 def enhance_image():
     if 'image' not in request.files:
@@ -30,7 +38,7 @@ def enhance_image():
 
     try:
         img = Image.open(input_path)
-        img = img.resize((2000, int(img.height * (2000 / img.width))))  # Resize width to 2000px
+        img = img.resize((2000, int(img.height * (2000 / img.width))))
         img.save(output_path, 'JPEG', quality=90)
 
         delete_file_later(input_path)
